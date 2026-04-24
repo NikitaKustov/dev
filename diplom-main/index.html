@@ -1,0 +1,290 @@
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Приложение для контроля выполнения физических упражнений</title>
+    <meta name="description" content="Приложение для контроля выполнения физических упражнений"/>
+    <link rel="stylesheet" href="vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<button type="button" id="btn_theme_corner" class="theme-corner-btn btn btn-sm btn-outline-light">Светлая тема</button>
+<div id="auth_overlay" class="auth-overlay">
+    <div class="auth-card auth-card-main">
+        <a href="?register=1" class="auth-register-icon" title="Регистрация" aria-label="Регистрация"></a>
+        <div data-auth-view="register" hidden>
+            <h2 class="auth-title">Регистрация</h2>
+            <p class="auth-note">Создайте профиль для контроля выполнения упражнений.</p>
+            <form id="form_register" class="auth-form">
+                <label class="auth-label">Логин</label>
+                <input class="form-control auth-input" id="reg_name" autocomplete="username" required />
+                <label class="auth-label">Имя</label>
+                <input class="form-control auth-input" id="reg_firstname" autocomplete="given-name" required />
+                <label class="auth-label">Фамилия</label>
+                <input class="form-control auth-input" id="reg_lastname" autocomplete="family-name" required />
+                <label class="auth-label">Email</label>
+                <input class="form-control auth-input" id="reg_email" type="email" autocomplete="email" required />
+                <label class="auth-label">Пароль</label>
+                <input class="form-control auth-input" id="reg_password" type="password" autocomplete="new-password" required minlength="6" />
+                <label class="auth-label">Повтор пароля</label>
+                <input class="form-control auth-input" id="reg_password2" type="password" autocomplete="new-password" required minlength="6" />
+                <p id="auth_err_register" class="auth-error" hidden></p>
+                <button type="submit" class="btn btn-primary btn-block">Зарегистрироваться</button>
+            </form>
+            <p class="auth-footer"><a href="#" id="link_show_login">Уже есть аккаунт — войти</a></p>
+        </div>
+        <div data-auth-view="login">
+            <h2 class="auth-title">Добро пожаловать</h2>
+            <p class="auth-note">Отслеживайте технику упражнений и сохраняйте результаты тренировок.</p>
+            <form id="form_login" class="auth-form auth-form-login-only">
+                <label class="auth-label" for="login_identity">Email или логин</label>
+                <input class="form-control auth-input" id="login_identity" type="text" autocomplete="username" required />
+                <label class="auth-label" for="login_password">Пароль</label>
+                <input class="form-control auth-input" id="login_password" type="password" autocomplete="current-password" required />
+                <p id="auth_err_login" class="auth-error" hidden></p>
+                <button type="submit" class="btn btn-primary btn-block">Войти</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="main_app">
+    <header class="app-header">
+        <div class="app-header-left">
+            <button type="button" id="btn_home" class="header-btn btn btn-outline-light">Главная</button>
+            <button type="button" id="btn_go_training" class="header-btn btn btn-primary">Тренировки</button>
+            <button type="button" id="btn_profile" class="header-btn btn btn-outline-light">Профиль</button>
+            <button type="button" id="btn_admin" class="header-btn btn btn-warning" hidden>Разработчик</button>
+        </div>
+        <div class="app-header-right">
+            <button type="button" id="btn_theme_toggle" class="header-btn btn btn-outline-light">Светлая тема</button>
+            <button type="button" id="btn_about" class="header-btn btn btn-outline-success">О нас</button>
+            <button type="button" id="auth_btn_logout" class="header-btn btn btn-outline-light">Выйти</button>
+        </div>
+    </header>
+
+    <section id="page_home" class="page active">
+        <div class="home-card">
+            <h1>Приложение для контроля выполнения физических упражнений</h1>
+            <p>Система определяет ключевые точки тела, помогает отслеживать технику и сохранять видеорезультаты.</p>
+            <p>Выберите раздел <b>«Тренировки»</b>, затем упражнение и включите камеру.</p>
+            <div class="home-quotes">
+                <p>"Сила не приходит от побед. Сила приходит через преодоление того, что раньше казалось невозможным." — Арнольд Шварценеггер</p>
+                <p>"Для меня жизнь - это постоянная жажда быть лучше, чем вчера." — Арнольд Шварценеггер</p>
+                <p>"Нельзя взобраться по лестнице успеха с руками в карманах." — Арнольд Шварценеггер</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="page_training" class="page">
+        <div class="status-bar text-center" id="status"></div>
+        <div id="training_panel" class="training-panel container py-3">
+            <div class="training-inner card text-light">
+                <div class="card-body">
+                    <h5 class="card-title">Выбор упражнения</h5>
+                    <div class="exercise-buttons">
+                        <button class="btn btn-outline-info exercise-btn" data-ex-name="Отжимания">Отжимания</button>
+                        <button class="btn btn-outline-info exercise-btn" data-ex-name="Приседания">Приседания</button>
+                        <button class="btn btn-outline-info exercise-btn" data-ex-name="Пресс">Пресс</button>
+                    </div>
+                    <p id="selected_exercise_label" class="small text-muted mt-2 mb-3"></p>
+                    <div id="training_ref_block" class="training-ref-block mt-2 mb-3">
+                        <h6 class="mb-2">Эталонное видео</h6>
+                        <p id="training_ref_empty" class="small text-muted mb-2">
+                            Для этого упражнения эталон ещё не загружен (вкладка «Разработчик» → редактор тренировок).
+                        </p>
+                        <video id="training_ref_video" class="training-ref-video" controls playsinline hidden></video>
+                    </div>
+                    <div id="training_sets_block" class="training-sets-block">
+                        <label for="training_sets_count" class="d-block small text-muted mb-1">Количество подходов</label>
+                        <input
+                            id="training_sets_count"
+                            class="form-control"
+                            type="number"
+                            min="1"
+                            step="1"
+                            value="3"
+                        />
+                    </div>
+                    <div class="training-camera-actions mt-3 d-flex flex-wrap gap-2 align-items-center">
+                        <button type="button" id="btn_start_camera" class="btn btn-success">Включить камеру</button>
+                        <button type="button" id="btn_stop_camera" class="btn btn-outline-secondary" disabled>Выключить камеру</button>
+                    </div>
+                    <h6 class="mt-3">Сохраненные записи</h6>
+                    <div id="training_results_list" class="training-results-list"></div>
+                    <aside id="record_window" class="record-window mt-4">
+                        <h6 class="record-title">Окно записи (1702x834)</h6>
+                        <div class="record-actions">
+                            <button type="button" id="btn_rec_start" class="btn btn-sm btn-danger">Начать запись</button>
+                            <button type="button" id="btn_rec_stop" class="btn btn-sm btn-warning" hidden>Остановить</button>
+                            <button type="button" id="btn_rec_save" class="btn btn-sm btn-success" hidden disabled>Сохранить</button>
+                        </div>
+                        <video id="record_preview" class="record-preview" controls playsinline muted></video>
+                        <p id="recording_err" class="video-record-err small text-warning mb-0 mt-1" hidden></p>
+                    </aside>
+                </div>
+            </div>
+        </div>
+        <div id="wrapper" class="container-fluid video-stage">
+            <canvas id="canvas" width="1702" height="834"></canvas>
+            <video id="video" preload="metadata" playsinline muted><source src=""></video>
+            <div id="info_debug"></div>
+        </div>
+    </section>
+
+    <section id="page_about" class="page">
+        <div class="profile-page-wrap">
+            <div class="profile-card profile-card-page">
+                <h5>О программе</h5>
+                <p>
+                    Платформа анализирует технику выполнения упражнений по видео и по камере, автоматически расставляет ключевые точки
+                    тела и помогает отслеживать прогресс пользователя.
+                </p>
+                <ul class="mb-3">
+                    <li>Раздел <b>Тренировки</b> запускает камеру, отображает скелет и сохраняет ваши видео по упражнениям.</li>
+                    <li><b>Личный кабинет</b> находится во вкладке Профиль — там можно редактировать данные и просматривать историю тренировок.</li>
+                    <li><b>Консоль разработчика</b> доступна только аккаунту <code>admin</code> через кнопку Разработчик в верхнем меню.</li>
+                </ul>
+                <button type="button" id="btn_about_back" class="btn btn-sm btn-secondary">Назад</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="page_profile" class="page">
+        <div class="profile-page-wrap">
+            <div class="profile-card profile-card-page">
+                <h5>Профиль пользователя</h5>
+                <form id="profile_form" class="profile-form">
+                    <div class="profile-avatar-wrap">
+                        <img id="profile_avatar_img" alt="avatar" class="profile-avatar" />
+                        <input id="profile_avatar_file" type="file" accept="image/*" />
+                    </div>
+                    <label>Логин</label>
+                    <input id="profile_name" class="form-control mb-2" />
+                    <label>Имя</label>
+                    <input id="profile_firstname" class="form-control mb-2" />
+                    <label>Фамилия</label>
+                    <input id="profile_lastname" class="form-control mb-2" />
+                    <label>Email</label>
+                    <input id="profile_email" type="email" class="form-control mb-3" />
+                    <button type="submit" class="btn btn-primary">Сохранить профиль</button>
+                    <p id="profile_msg" class="small mt-2 mb-0"></p>
+                </form>
+                <div class="mt-3 pt-2 border-top">
+                    <p class="small text-muted mb-2">Удаление аккаунта необратимо: профиль и все сохранённые видео тренировок будут удалены.</p>
+                    <button type="button" id="btn_delete_account" class="btn btn-outline-danger btn-sm">Удалить аккаунт</button>
+                </div>
+                <hr/>
+                <h6 class="mb-3">Сохраненные тренировки</h6>
+                <div id="profile_saved_trainings" class="profile-saved-trainings"></div>
+                <button type="button" id="btn_profile_back" class="btn btn-sm btn-secondary mt-3">Назад</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="page_admin" class="page">
+        <div class="profile-page-wrap">
+            <div class="profile-card profile-card-page">
+                <h5>Окно разработчика</h5>
+                <p class="small text-muted">Доступно только для учётной записи <strong>admin</strong>. Загрузите видео, выберите кадр, при необходимости добавьте точки вручную и сохраните.</p>
+                <div class="form-group">
+                    <label>Видео для разметки</label>
+                    <input id="dev_video_file" type="file" accept="video/*" class="form-control"/>
+                </div>
+                <div class="form-group">
+                    <label>Кадр</label>
+                    <input id="dev_frame_slider" type="range" min="0" max="0" value="0" class="form-control-range"/>
+                </div>
+                <div class="row dev-workspace align-items-start">
+                    <div class="col-lg-8 mb-3 mb-lg-0">
+                        <canvas id="dev_canvas" width="960" height="540"></canvas>
+                        <video id="dev_video" class="dev-offscreen-video" playsinline muted></video>
+                    </div>
+                    <div class="col-lg-4 dev-tools-column">
+                        <button type="button" id="dev_add_point_btn" class="btn btn-outline-secondary btn-block mb-3">Добавить точку</button>
+                        <button type="button" id="dev_remove_last_point_btn" class="btn btn-outline-danger btn-block mb-3">Удалить последнюю точку</button>
+                        <button type="button" id="dev_link_points_btn" class="btn btn-outline-info btn-block mb-3">Связать точки линией</button>
+                        <button type="button" id="dev_undo_btn" class="btn btn-outline-light btn-block mb-2">Отменить последнее действие</button>
+                        <p class="small text-muted mb-0">
+                            Зажмите и перетащите точку мышью для перемещения. В режиме связывания выберите первую и вторую точки одиночными кликами.
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <button type="button" id="dev_detect_btn" class="btn btn-outline-info btn-sm">Определить точки на кадре</button>
+                    <button type="button" id="dev_save_frame_btn" class="btn btn-outline-primary btn-sm">Сохранить точки этого кадра</button>
+                    <button type="button" id="dev_save_btn" class="btn btn-success btn-sm">Сохранить в test</button>
+                    <button type="button" id="dev_render_mp4_btn" class="btn btn-outline-success btn-sm">Обработать видео и скачать MP4</button>
+                </div>
+                <p id="admin_msg" class="small mt-3 mb-2"></p>
+                <hr/>
+                <h6>Редактор тренировок</h6>
+                <p class="small text-muted">Для каждого упражнения загрузите эталон — он появится в окне ниже и на вкладке «Тренировки».</p>
+                <div id="admin_training_ref_rows" class="admin-training-ref-rows">
+                    <div class="admin-training-ref-row" data-ex-name="Отжимания">
+                        <div class="admin-training-ref-row-title">Отжимания</div>
+                        <div class="admin-training-ref-row-controls">
+                            <input type="file" accept="video/*" class="form-control admin-event-file"/>
+                            <button type="button" class="btn btn-primary btn-sm admin-event-upload">Загрузить</button>
+                        </div>
+                        <p class="admin-ref-empty small text-muted mb-1">Эталон не загружен</p>
+                        <video class="admin-ref-preview training-ref-video" controls playsinline hidden></video>
+                    </div>
+                    <div class="admin-training-ref-row" data-ex-name="Приседания">
+                        <div class="admin-training-ref-row-title">Приседания</div>
+                        <div class="admin-training-ref-row-controls">
+                            <input type="file" accept="video/*" class="form-control admin-event-file"/>
+                            <button type="button" class="btn btn-primary btn-sm admin-event-upload">Загрузить</button>
+                        </div>
+                        <p class="admin-ref-empty small text-muted mb-1">Эталон не загружен</p>
+                        <video class="admin-ref-preview training-ref-video" controls playsinline hidden></video>
+                    </div>
+                    <div class="admin-training-ref-row" data-ex-name="Пресс">
+                        <div class="admin-training-ref-row-title">Пресс</div>
+                        <div class="admin-training-ref-row-controls">
+                            <input type="file" accept="video/*" class="form-control admin-event-file"/>
+                            <button type="button" class="btn btn-primary btn-sm admin-event-upload">Загрузить</button>
+                        </div>
+                        <p class="admin-ref-empty small text-muted mb-1">Эталон не загружен</p>
+                        <video class="admin-ref-preview training-ref-video" controls playsinline hidden></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script src="./js/auth.js"></script>
+<script src="./js/training.js"></script>
+<script src="./js/recording.js"></script>
+<script src="vendor/tf-core.min.js"></script>
+<script src="vendor/tf-converter.min.js"></script>
+<script src="vendor/tf-backend-webgl.min.js"></script>
+<script src="vendor/pose-detection.min.js"></script>
+<script src="./js/app.js"></script>
+<script src="./js/tracker.js"></script>
+<script src="./js/admin.js"></script>
+<script>
+const model = 'BlazePoseHeavy';
+async function startTrackerApp() {
+    app.init();
+    await app.bootstrapTrainingUi();
+    recording.init();
+    tracker.setModel(model);
+    tracker.autofit = true;
+    tracker.on('statuschange', function(msg) { app.updateStatus(msg); });
+    tracker.on('beforeupdate', function(poses) { app.updateDebug(poses); app.updateCounter(poses); });
+    tracker.elCanvas = '#canvas';
+    tracker.elVideo = '#video';
+    tracker.inferenceProviderPreferred = 'yolo_api';
+    tracker.pointWidth = 6;
+    tracker.pointRadius = 6;
+    tracker.init();
+    admin.init();
+}
+auth.onAuthenticated(startTrackerApp);
+auth.start();
+</script>
+</body>
+</html>

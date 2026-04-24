@@ -1,0 +1,9 @@
+{
+  "name": "diplom-body-tracker",
+  "private": true,
+  "scripts": {
+    "install:server": "npm install --prefix server",
+    "start": "node server/index.js",
+    "vendor": "node scripts/download-vendor.mjs"
+  }
+}
